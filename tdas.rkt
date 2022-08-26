@@ -4,7 +4,14 @@
 (struct pixrgb-d (x y r g b depth))
 (struct pixhex-d (x y hex depth))
 
-(struct image (width height pixels))
+(define (image width height . pixels) (list width height pixels))
 
-;falta completar image para sacar los parametros de pixels sin listas
-(define (bitmap? img)  (first (first (image-pixels img))))
+;caddr accede a la lista "pixels"
+(define (bitmap? img) (pixbit-d? (car (caddr img))))
+(define (pixmap? img) (pixrgb-d? (car (caddr img))))
+(define (hexmap? img) (pixhex-d? (car (caddr img))))
+
+;tbd
+(define (compressed? img) #f)
+
+(define (flipH img) ())

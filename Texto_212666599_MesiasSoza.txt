@@ -1,0 +1,5 @@
+pixbit-d: struct con variables (x(int) y(int) bit(int) depth(int))
+pixrgb-d: struct con variables (x(int) y(int) r(int) g(int) b(int) depth(int))
+pixhex-d: struct con variables (x(int) y(int) hex(string) depth(int))
+
+image: función con las variables width(int) height(int) pixels(list)
