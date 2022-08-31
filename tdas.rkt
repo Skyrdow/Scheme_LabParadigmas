@@ -11,7 +11,7 @@
 (define (getPixVal pix) (fourth pix))
 (define (getPixDepth pix)(fifth pix))
 
-;; modificadores genericos de pixeles
+;; modificadores genericos de pixeles // no se usa pixbit, pixrgb o pixhex
 (define (setPixType pix val) (list val (getPixPosX pix) (getPixPosY pix) (getPixVal pix) (getPixDepth pix)))
 (define (setPixPosX pix val) (list (getPixType pix) val (getPixPosY pix) (getPixVal pix) (getPixDepth pix)))
 (define (setPixPosY pix val) (list (getPixType pix) (getPixPosX pix) val (getPixVal pix) (getPixDepth pix)))
@@ -25,6 +25,9 @@
 (define (int->hex val) (if (< 16 val) (number->string val 16) (string-append "0" (number->string val 16))))
 ; transforma valores de (r g b) a la string de color hexadecimal "#RRGGBB"
 (define (rgb->hex pix) (setPixVal pix (string-upcase (string-append "#" (int->hex (getPixR pix)) (int->hex (getPixG pix)) (int->hex (getPixB pix))))))
+; intercambia coordenadas x e y de un pixel
+(define (swapPixXY pix) (setPixPosX (setPixPosY pix (getPixPosX pix)) (getPixPosY pix)))
+
   
 ;; pixbit:
 ; constructor
@@ -81,23 +84,41 @@
 (define (hexmap? img) (and (image? img)(pixhex? (first (getImgPixs img)))))
 (define (compressed? img) (equal? -1 (getImgComp img)))
 
-; transformación de imagenes
-(define (flipH img) (if (image? img)
-                               (setImgPixs img (map
-                                                (lambda (pix) (setPixPosX pix (abs (+ 1 (- (getPixPosX pix) (getImgW img))))))
-                                                (getImgPixs img)))
-                               (display "No es una imagen")))
+; información de imagen
+; histograma
+(define (histogram img) (cond
+                          [(bitmap? img) (histoRec (sort (pixs->val (getImgPixs img)) <) (list))]
+                          [(pixmap? img) (histoRec (sort (pixs->val (getImgPixs (imgRGB->imgHex img))) string<?) (list))]
+                          [(hexmap? img) (histoRec (sort (pixs->val (getImgPixs img)) string<?) (list)) ]))
+; toma la lista de pixeles para recorrer recursivamente y data (valor cantidad)
+(define (histoRec vals data) (if (empty? vals)
+                                 data
+                                 (histoRec (remove* (list (car vals)) vals) (append data (list (car vals) (count (lambda (val) (equal? (car vals) val)) vals))))))
+; toma todos los pixeles y devuelve la lista de valores
+(define (pixs->val img) (map (lambda (pix) (getPixVal pix)) img))
+
+;; transformación de imagenes
 (define (flipV img) (if (image? img)
-                               (setImgPixs img (map
-                                                (lambda (pix) (setPixPosY pix (abs (+ 1 (- (getPixPosY pix) (getImgH img))))))
-                                                (getImgPixs img)))
+                               (setImgPixs img (flipPixV (getImgPixs img) (list) (getImgW img)))
                                (display "No es una imagen")))
+; funcion recursiva de apoyo
+(define (flipPixV pixs flPixs imgW) (if (empty? pixs) flPixs (flipPixV (cdr pixs) (append flPixs (setPixPosX (car pixs) (abs (+ 1 (- (getPixPosX (car pixs)) imgW))))) imgW)))
+
+(define (flipH img) (if (image? img)
+                               (setImgPixs img (flipPixH (getImgPixs img) (list) (getImgH img)))
+                               (display "No es una imagen")))
+; funcion recursiva de apoyo
+(define (flipPixH pixs flPixs imgH) (if (empty? pixs) flPixs (flipPixH (cdr pixs) (append flPixs (setPixPosY (car pixs) (abs (+ 1 (- (getPixPosY (car pixs)) imgH))))) imgH)))
+
 ; punto 1 esquina de arriba a la izquierda, punto 2 esquina de abajo a la derecha
 (define (crop img x1 y1 x2 y2) (filter (lambda (pix) (if (and (<= x1 (getPixPosX pix)) (>= x2 (getPixPosX pix)) (<= y1 (getPixPosY pix)) (>= y2(getPixPosY pix)))
                                                          #t
                                                          #f))
                                          (getImgPixs img)))
+; conversión rgb a hex
 (define (imgRGB->imgHex imgrgb) (setImgPixs imgrgb (map (lambda (pix) (rgb->hex pix)) (getImgPixs imgrgb))))
+; rotación 90 grados a la derecha, o en sentido horario
+(define (rotate90 img) (flipH (setImgPixs img (map (lambda (pix) (swapPixXY pix)) (getImgPixs img)))))
 
 
 
