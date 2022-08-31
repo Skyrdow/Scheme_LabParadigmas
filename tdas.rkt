@@ -21,10 +21,6 @@
 ;; otras funciones
 ; función generica que compara el tipo de un pixel
 (define (compType type pix) (equal? type (getPixType pix)))
-; transforma numeros en base 10 a hex dejando un 0 para valores entre 0 y 16
-(define (int->hex val) (if (< 16 val) (number->string val 16) (string-append "0" (number->string val 16))))
-; transforma valores de (r g b) a la string de color hexadecimal "#RRGGBB"
-(define (rgb->hex pix) (setPixVal pix (string-upcase (string-append "#" (int->hex (getPixR pix)) (int->hex (getPixG pix)) (int->hex (getPixB pix))))))
 ; intercambia coordenadas x e y de un pixel
 (define (swapPixXY pix) (setPixPosX (setPixPosY pix (getPixPosX pix)) (getPixPosY pix)))
 
@@ -84,16 +80,25 @@
 (define (hexmap? img) (and (image? img)(pixhex? (first (getImgPixs img)))))
 (define (compressed? img) (equal? -1 (getImgComp img)))
 
+; transforma numeros en base 10 a hex dejando un 0 para valores entre 0 y 16
+(define (int->hex val) (if (< 16 val) (number->string val 16) (string-append "0" (number->string val 16))))
+; transforma valores de (r g b) a la string de color hexadecimal "#RRGGBB"
+(define (rgb->hex pix) (setPixVal pix (string-upcase (string-append "#" (int->hex (getPixR pix)) (int->hex (getPixG pix)) (int->hex (getPixB pix))))))
+; de hex a rgb
+(define (hex->rgb hex) (list (hex->int (substring hex 1 3)) (hex->int (substring hex 3 5)) (hex->int (substring hex 5 7))))
+; string hex a int
+(define (hex->int str) (string->number (string-append "#x" str)))
+
 ; información de imagen
 ; histograma
 (define (histogram img) (cond
                           [(bitmap? img) (histoRec (sort (pixs->val (getImgPixs img)) <) (list))]
-                          [(pixmap? img) (histoRec (sort (pixs->val (getImgPixs (imgRGB->imgHex img))) string<?) (list))]
+                          [(pixmap? img) (map (lambda (data) (list (hex->rgb (first data)) (second data))) (histoRec (sort (pixs->val (getImgPixs (imgRGB->imgHex img))) string<?) (list)))]
                           [(hexmap? img) (histoRec (sort (pixs->val (getImgPixs img)) string<?) (list)) ]))
 ; toma la lista de pixeles para recorrer recursivamente y data (valor cantidad)
 (define (histoRec vals data) (if (empty? vals)
                                  data
-                                 (histoRec (remove* (list (car vals)) vals) (append data (list (car vals) (count (lambda (val) (equal? (car vals) val)) vals))))))
+                                 (histoRec (remove* (list (car vals)) vals) (append data (list (list (car vals) (count (lambda (val) (equal? (car vals) val)) vals)))))))
 ; toma todos los pixeles y devuelve la lista de valores
 (define (pixs->val img) (map (lambda (pix) (getPixVal pix)) img))
 
@@ -102,13 +107,17 @@
                                (setImgPixs img (flipPixV (getImgPixs img) (list) (getImgW img)))
                                (display "No es una imagen")))
 ; funcion recursiva de apoyo
-(define (flipPixV pixs flPixs imgW) (if (empty? pixs) flPixs (flipPixV (cdr pixs) (append flPixs (setPixPosX (car pixs) (abs (+ 1 (- (getPixPosX (car pixs)) imgW))))) imgW)))
+(define (flipPixV pixs flPixs imgW) (if (empty? pixs)
+                                        flPixs
+                                        (flipPixV (cdr pixs) (append flPixs (setPixPosX (car pixs) (abs (+ 1 (- (getPixPosX (car pixs)) imgW))))) imgW)))
 
 (define (flipH img) (if (image? img)
                                (setImgPixs img (flipPixH (getImgPixs img) (list) (getImgH img)))
                                (display "No es una imagen")))
 ; funcion recursiva de apoyo
-(define (flipPixH pixs flPixs imgH) (if (empty? pixs) flPixs (flipPixH (cdr pixs) (append flPixs (setPixPosY (car pixs) (abs (+ 1 (- (getPixPosY (car pixs)) imgH))))) imgH)))
+(define (flipPixH pixs flPixs imgH) (if (empty? pixs)
+                                        flPixs
+                                        (flipPixH (cdr pixs) (append flPixs (setPixPosY (car pixs) (abs (+ 1 (- (getPixPosY (car pixs)) imgH))))) imgH)))
 
 ; punto 1 esquina de arriba a la izquierda, punto 2 esquina de abajo a la derecha
 (define (crop img x1 y1 x2 y2) (filter (lambda (pix) (if (and (<= x1 (getPixPosX pix)) (>= x2 (getPixPosX pix)) (<= y1 (getPixPosY pix)) (>= y2(getPixPosY pix)))
