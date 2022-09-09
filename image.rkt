@@ -1,60 +1,8 @@
 #lang racket
 
 (provide (all-defined-out))
-;(define (pixel type x y value depth) (list type x y value depth))// descartado por redundancia
-
-;;; pixel
-
-;; selectores genericos de pixeles
-(define (getPixType pix) (first pix))
-(define (getPixPosX pix) (second pix))
-(define (getPixPosY pix) (third pix))
-(define (getPixVal pix) (fourth pix))
-(define (getPixDepth pix)(fifth pix))
-
-;; modificadores genericos de pixeles // no se usa pixbit, pixrgb o pixhex
-(define (setPixType pix val) (list val (getPixPosX pix) (getPixPosY pix) (getPixVal pix) (getPixDepth pix)))
-(define (setPixPosX pix val) (list (getPixType pix) val (getPixPosY pix) (getPixVal pix) (getPixDepth pix)))
-(define (setPixPosY pix val) (list (getPixType pix) (getPixPosX pix) val (getPixVal pix) (getPixDepth pix)))
-(define (setPixVal pix val) (list (getPixType pix) (getPixPosX pix) (getPixPosY pix) val (getPixDepth pix)))
-(define (setPixDepth pix val) (list (getPixType pix) (getPixPosX pix) (getPixPosY pix) (getPixVal pix) val))
-(define (setPixXY pix x y) (list (getPixType pix) x y (getPixVal pix) (getPixDepth pix)))
-
-;; otras funciones
-; función generica que compara el tipo de un pixel
-(define (compType type pix) (equal? type (getPixType pix)))
-; intercambia coordenadas x e y de un pixel
-(define (swapPixXY pix) (setPixXY  pix (getPixPosY pix) (getPixPosX pix)))
-
-  
-;; pixbit:
-; constructor
-(define (pixbit-d x y bit depth) (list "pixbit-d" x y bit depth))
-; selector
-(define (getBit pixbit) (getPixVal pixbit))
-; pertenencia
-(define (pixbit? pix) (compType "pixbit-d" pix))
-
-
-;; pixrgb:
-; constructor
-(define (pixrgb-d x y r g b depth) (list "pixrgb-d" x y (list r g b) depth))
-; selector
-(define (getRgb pixrgb) (getPixVal pixrgb))
-(define (getPixR pixrgb) (first (getRgb pixrgb)))
-(define (getPixG pixrgb) (second (getRgb pixrgb)))
-(define (getPixB pixrgb) (third (getRgb pixrgb)))
-;pertenencia
-(define (pixrgb? pix) (compType "pixrgb-d" pix))
-
-
-;; pixhex:
-; constructor
-(define (pixhex-d x y hex depth) (list "pixhex-d" x y hex depth))
-; selector
-(define (getHex pixhex) (getPixVal pixhex))
-; pertenencia
-(define (pixhex? pix) (compType "pixhex-d" pix))
+(require "otras_funciones.rkt")
+(require "pixel.rkt")
 
 ;;; image:
 
@@ -96,16 +44,8 @@
                                             (pixhex? (first (getImgPixs img))))))
 (define (compressed? img) (not (equal? -1 (getImgComp img))))
 
-; transforma numeros en base 10 a hex dejando un 0 para valores entre 0 y 16
-(define (int->hex val) (if (< 16 val)
-                           (number->string val 16)
-                           (string-append "0" (number->string val 16))))
-; transforma valores (r g b) de un pixrgb a pixel hexadecimal "#RRGGBB"
-(define (pixrgb->pixhex pix) (setPixType (setPixVal pix (string-upcase (string-append "#" (int->hex (getPixR pix)) (int->hex (getPixG pix)) (int->hex (getPixB pix))))) "pixhex-d"))
-; de hex a rgb
-(define (hex->rgb hex) (list (hex->int (substring hex 1 3)) (hex->int (substring hex 3 5)) (hex->int (substring hex 5 7))))
-; string hex a int
-(define (hex->int str) (string->number str 16))
+
+
 
 ; información de imagen
 ; histograma
@@ -118,25 +58,17 @@
 (define (histoRec vals data) (if (empty? vals)
                                  data
                                  (histoRec (remove* (list (car vals)) vals) (append data (list (list (car vals) (count (lambda (val) (equal? (car vals) val)) vals)))))))
-; toma todos los pixeles y devuelve la lista de valores
-(define (pixs->val img) (map (lambda (pix) (getPixVal pix)) img))
+
 
 ;; transformación de imagenes
 (define (flipV img) (if (image? img)
-                               (setImgPixs img (flipPixV (getImgPixs img) (list) (getImgW img)))
+                               (setImgPixs img (flipPixV (getImgPixs img) (list) (- (getImgH img) 1)))
                                (display "No es una imagen")))
-; funcion recursiva de apoyo
-(define (flipPixV pixs flPixs imgW) (if (empty? pixs)
-                                        flPixs
-                                        (flipPixV (cdr pixs) (append flPixs (list (setPixPosX (car pixs) (abs (+ 1 (- (getPixPosX (car pixs)) imgW)))))) imgW)))
 
 (define (flipH img) (if (image? img)
-                               (setImgPixs img (flipPixH (getImgPixs img) (list) (getImgH img)))
+                               (setImgPixs img (flipPixH (getImgPixs img) (list) (- (getImgW img) 1)))
                                (display "No es una imagen")))
-; funcion recursiva de apoyo
-(define (flipPixH pixs flPixs imgH) (if (empty? pixs)
-                                        flPixs
-                                        (flipPixH (cdr pixs) (append flPixs (list (setPixPosY (car pixs) (abs (+ 1 (- (getPixPosY (car pixs)) imgH)))))) imgH)))
+
 
 ; punto 1 esquina de arriba a la izquierda, punto 2 esquina de abajo a la derecha
 (define (crop img x1 y1 x2 y2) (setImgWH (setImgPixs img
@@ -148,7 +80,7 @@
                                                                                  #t
                                                                                  #f))
                                                                   (getImgPixs img))))
-                                         (- (getImgW img) y1) (-  (getImgH img) x1)))
+                                         (+ (- x2 x1) 1) (+ (- y2 y1) 1)))
 
 ; conversión rgb a hex
 (define (imgRGB->imgHex imgrgb) (setImgPixs imgrgb (map (lambda (pix) (pixrgb->pixhex pix)) (getImgPixs imgrgb))))
@@ -179,20 +111,13 @@
 ; adj channel
 (define adjustChannel (lambda (f1 f2 f3) (lambda (pix) (f2 pix (f3 (f1 pix))))))
 
-(define (getR pix) (getPixR pix))
-(define (setR pix valR) (setPixVal pix (list valR (getPixG pix) (getPixB pix))))
-(define (getG pix) (getPixG pix))
-(define (setG pix valG) (setPixVal pix (list (getPixR pix) valG (getPixB pix))))
-(define (getB pix) (getPixB pix))
-(define (setB pix valB) (setPixVal pix (list (getPixR pix) (getPixG pix) valB)))
-
 (define (incCh val) (+ 1 val))
 (define (decCh val) (- val 1))
 
 ;; conversiones a string
 ; obtener pix en la pos X Y
 (define (findPix img x y) (findf (lambda (pix) (and (equal? x (getPixPosX pix)) (equal? y (getPixPosY pix)))) (getImgPixs img)))
-; preguntar si existe pix en la pos X Y
+; preguntar si existe pix en la pos X Y borrar [let]
 (define (pixOnXY? img x y) (if (not (false? (findPix img x y)))
                                #t
                                #f))
@@ -205,25 +130,13 @@
 ; image->string
 (define (image->string img func) (if (compressed? img)
                                      (image->string (decompress img) func)
-                                     (strAppendList (for/list ([i (inclusive-range 0 (- (getImgH img) 1))])
-                                                      (for/list ([j (inclusive-range 0 (- (getImgW img) 1))])
+                                     (strAppendList (for/list ([i (range 0 (getImgH img))])
+                                                      (for/list ([j (range 0 (getImgW img))])
                                                         (if (equal? j (- (getImgW img) 1))
-                                                            (string-append (func (findPix img i j)) "\n")
-                                                            (string-append (func (findPix img i j)) " ")))))))
-; pixbit->string
-(define (pixbit->string pix) (if (false? pix)
-                                 "#------"
-                                 (if (equal? 0 (getBit pix))
-                                     "#000000"
-                                     "#FFFFFF")))
-; pixrgb->string
-(define (pixrgb->string pix) (if (false? pix)
-                                 "#------"
-                                 (pixhex->string (pixrgb->pixhex pix))))
-; pixhex->string
-(define (pixhex->string pix) (if (false? pix)
-                                 "#------"
-                                 (getPixVal pix)))
+                                                            (string-append (func (findPix img j i)) "\n")
+                                                            (string-append (func (findPix img j i)) " ")))))))
+
+
 
 ;; depth layers
 (define (depthLayers img) (cond
@@ -250,19 +163,19 @@
 (define (decompress img) (setImgComp (cond
                                        [(bitmap? img) (setImgPixs img (for*/list ([i (inclusive-range 0 (- (getImgH img) 1))]
                                                                                   [j (inclusive-range 0 (- (getImgW img) 1))])
-                                                                               (if (pixOnXY? img i j)
-                                                                                   (findPix img i j)
-                                                                                   (pixbit-d i j (getImgComp img) 0))))]
+                                                                        (if (pixOnXY? img i j)
+                                                                            (findPix img i j)
+                                                                            (pixbit-d i j (getImgComp img) 0))))]
                             
                                        [(pixmap? img) (setImgPixs img (for*/list ([i (inclusive-range 0 (- (getImgH img) 1))]
-                                                                             [j (inclusive-range 0 (- (getImgW img) 1))])
-                                                                               (if (pixOnXY? img i j)
-                                                                                   (findPix img i j)
-                                                                                   (pixrgb-d i j (first (getImgComp img)) (second (getImgComp img)) (third (getImgComp img)) 0))))]
+                                                                                  [j (inclusive-range 0 (- (getImgW img) 1))])
+                                                                        (if (pixOnXY? img j i)
+                                                                            (findPix img j i)
+                                                                            (pixrgb-d j i (first (getImgComp img)) (second (getImgComp img)) (third (getImgComp img)) 0))))]
                               
                                        [(hexmap? img) (setImgPixs img (for*/list ([i (inclusive-range 0 (- (getImgH img) 1))]
                                                                                   [j (inclusive-range 0 (- (getImgW img) 1))])
-                                                                               (if (pixOnXY? img i j)
-                                                                                   (findPix img i j)
-                                                                                   (pixhex-d i j (getImgComp img) 0))))])
+                                                                        (if (pixOnXY? img j i)
+                                                                            (findPix img j i)
+                                                                            (pixhex-d j i (getImgComp img) 0))))])
                                      -1))
