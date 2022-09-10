@@ -33,6 +33,13 @@
 ;se asume que las funciones de ajuste de canal están implementadas. 
 (define img17 (edit (adjustChannel getB setB incCh) img1))
 
+(display (image->string img2 pixbit->string))
+(display "\n")
+(display (image->string img9 pixbit->string))
+(display "\n")
+(display (image->string (decompress img9) pixbit->string))
+
+#|
 ;imágenes no comprimidas
 (display (image->string img3 pixhex->string))
 (display "\n")
@@ -44,6 +51,6 @@
 (display "\n")
 (display (image->string (crop img3 0 1 1 2) pixhex->string))
 (display "\n")
-(display (image->string img10 pixhex->string))
+(display (image->string img10 pixhex->string))|#
 
 

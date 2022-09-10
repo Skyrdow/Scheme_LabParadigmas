@@ -1,5 +1,40 @@
-pixbit-d: struct con variables (x(int) y(int) bit(int) depth(int))
-pixrgb-d: struct con variables (x(int) y(int) r(int) g(int) b(int) depth(int))
-pixhex-d: struct con variables (x(int) y(int) hex(string) depth(int))
+TDA pixel-d:
+Descripción: Guardan los datos del pixel, tipo, coordenada, valor y profundidad. No tiene constructor, ya que los pixeles se construyen por tipo.
+Constructor: No aplica.
+Selectores: getPixType, getPixPosX, getPixPosY, getPixVal, getPixDepth.
+Modificadores: setPixType, setPixPosX, setPixPosY, setPixVal, setPixDepth.
+Pertenencia: No aplica.
+Funciones: compType (comparar tipo de pixel con una string, es la base de las pertenencias de los TDAs de tipo pixel), swapPixXY y pixrgb->pixhex (cambio de tipo y valor de un pixel).
 
-image: función con las variables width(int) height(int) pixels(list)
+TDA pixbit-d:
+Descripción: Tipo de pixel que guarda 1 o 0 en el valor.
+Costructor: x (int) X y (int) X bit (int) X profundidad (int)
+Selectores: getBit.
+Modificadores: No aplica.
+Pertenencia: pixrgb?.
+Funciones: pixbit->string.
+
+TDA pixrgb-d:
+Descripción: Tipo de pixel que guarda 3 valores enteros en una lista.
+Costructor: x (int) X y (int) X r (int) X g (int) X b (int) X profundidad (int).
+Selectores: getR, getG, getB, getRgb.
+Modificadores: setR, setG, setB.
+Pertenencia: pixrgb?
+Funciones: pixrgb->string
+
+TDA pixhex-d:
+Descripción: Tipo de pixel que guarda una string que representa un valor hexadecimal en el valor.
+Costructor: x (int) X y (int) X hex (string) X profundidad (int)
+Selectores: getHex
+Modificadores: no aplica
+Pertenencia: pixhex?
+Funciones: pixhex->string
+
+TDA imagen: 
+Descripción: Guarda la información de la imagen (tamaño y datos de compresión) y los pixeles de la misma.
+Costructor: ancho (int) X alto (int) X pixeles (pixel) ...
+Selectores: getImgW, getImgH img, getImgComp, getImgPixs.
+Modificadores: getImgW, getImgH img, getImgComp, getImgPixs, getImgWH.
+Pertenencia: image?, bitmap?, pixmap?, hexmap?, compressed?
+Funciones: pixs->val, histogram, flipV, flipH, crop, imgRgb->imgHex, rotate90, compress, edit, image->string, depthLayers, decompress.
+
