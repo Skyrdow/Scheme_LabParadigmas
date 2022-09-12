@@ -31,10 +31,10 @@ Pertenencia: pixhex?
 Funciones: pixhex->string
 
 TDA imagen: 
-Descripción: Guarda la información de la imagen (tamaño y datos de compresión) y los pixeles de la misma.
+Descripción: Guarda la información de la imagen (tamaño y valor de compresión) y los pixeles de la misma. El valor de compresión almacena el color comprimido por la función compress para luego recuperar la imagen original, si este es -1, significa que la imagen no está comprimida.
 Costructor: ancho (int) X alto (int) X pixeles (pixel) ...
 Selectores: getImgW, getImgH img, getImgComp, getImgPixs.
 Modificadores: getImgW, getImgH img, getImgComp, getImgPixs, getImgWH.
 Pertenencia: image?, bitmap?, pixmap?, hexmap?, compressed?
-Funciones: pixs->val, histogram, flipV, flipH, crop, imgRgb->imgHex, rotate90, compress, edit, image->string, depthLayers, decompress.
+Funciones: pixs->val, histogram, flipV, flipH, crop, imgRgb->imgHex, rotate90, compress, edit, recorrerImg, image->string, depthLayers, decompress.
 
