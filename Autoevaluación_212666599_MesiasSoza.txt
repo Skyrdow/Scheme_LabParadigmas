@@ -1,0 +1,21 @@
+Requerimientos funcionales | Nota
+TDAs					    0.5
+image                       0.6
+bitmap?                     0.1
+pixmap?                     0.1
+hexmap?                     0.1
+compressed?                 0.1
+flipH                       0.3
+flipV                       0.3
+crop                        0.2
+imgRGB->imgHex              0.5
+histogram                   0.5
+rotate90                    0.7
+compress                    0.2
+edit                        0.3
+invertColorBit              0.1
+invertColorRGB              0.1
+adjustChannel               0.3
+image->string               0.5
+depthLayers                 1
+decompress				    1
