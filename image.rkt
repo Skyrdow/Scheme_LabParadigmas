@@ -280,7 +280,9 @@
 ; Entrada: Image
 ; Salida: Image
 ; Descripción: rellena los pixeles que no se encuentran en la imagen de entrada con el valor de compresión de la imagen, perdiendo por completo la profundidad
-(define (decompress img) (setImgComp (cond
+(define (decompress img) (if (not (compressed? img))
+                             img
+                             (setImgComp (cond
                                        [(bitmap? img) (setImgPixs img (recorrerImg img (lambda (x y) (let ([pixOnXY ((findPix img) x y)])
                                                                                                        (if (false? pixOnXY)
                                                                                                            (pixbit-d x y (getImgComp img) 0)
@@ -295,4 +297,4 @@
                                                                                                        (if (false? pixOnXY)
                                                                                                            (pixhex-d x y (getImgComp img) 0)
                                                                                                            pixOnXY)))))])
-                                     -1))
+                                     -1)))
