@@ -1,5 +1,5 @@
 Requerimientos funcionales | Nota
-TDAs					              1
+TDAs                        1
 image                       1
 bitmap?                     1
 pixmap?                     1
@@ -18,4 +18,4 @@ invertColorRGB              1
 adjustChannel               1
 image->string               1
 depthLayers                 1
-decompress				          1
+decompress                  1
