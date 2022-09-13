@@ -296,5 +296,3 @@
                                                                                                            (pixhex-d x y (getImgComp img) 0)
                                                                                                            pixOnXY)))))])
                                      -1))
-
-

@@ -88,8 +88,8 @@
 (define (pixbit->string pix) (if (false? pix)
                                  "#------"
                                  (if (equal? 0 (getBit pix))
-                                     "#000000"
-                                     "#FFFFFF")))
+                                     "0"
+                                     "1")))
 
 ; Entrada: Pixbit
 ; Salida: Pixbit
@@ -183,8 +183,3 @@
 (define (pixhex->string pix) (if (false? pix)
                                  "#------"
                                  (getPixVal pix)))
-
-
-
-
-
