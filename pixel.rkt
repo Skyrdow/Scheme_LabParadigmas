@@ -72,7 +72,7 @@
 ;; TDA pixbit:
 ; Entrada: x (Entero) X y (Entero) X bit (Entero, 0 o 1) X profundidad (Entero, de 0 a 255)
 ; Salida: Pixbit
-; Descripción: constructor de pixbit
+; Descripción: constructor de pixbit, los valores de color deben ser restringidos a lo que indica en la documentación, y la posición del pixel debe estar dentro de la imagen respectiva
 (define (pixbit-d x y bit depth) (list "pixbit-d" x y bit depth))
 ; Entrada: Pixbit
 ; Salida: Bit (Entero)
@@ -100,7 +100,7 @@
 ;; TDA pixrgb:
 ; Entrada: x (Entero) X y (Entero) X r (Entero, de 0 a 255) X g (Entero, de 0 a 255) X b (Entero, de 0 a 255) X profundidad (Entero, de 0 a 255)
 ; Salida: pixrgb
-; Descripción: constructor de pixrgb
+; Descripción: constructor de pixrgb, los valores de color deben ser restringidos a lo que indica en la documentación, y la posición del pixel debe estar dentro de la imagen respectiva
 (define (pixrgb-d x y r g b depth) (list "pixrgb-d" x y (list r g b) depth))
 ; Entrada: Pixrgb
 ; Salida: Lista de Enteros
@@ -167,7 +167,7 @@
 ;; TDA pixhex:
 ; Entrada: x (Entero) X y (Entero) X hex (String, de formato "#RRGGBB") X profundidad (Entero, de 0 a 255)
 ; Salida: Pixhex
-; Descripción: constructor de pixhex
+; Descripción: constructor de pixhex, los valores de color deben ser restringidos a lo que indica en la documentación, y la posición del pixel debe estar dentro de la imagen respectiva
 (define (pixhex-d x y hex depth) (list "pixhex-d" x y hex depth))
 ; Entrada: Pixhex
 ; Salida: String
