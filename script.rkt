@@ -196,23 +196,28 @@
 
 (display "\n## FIN DE LAS PRUEBAS EXTRA. INICIO DEL  \"SCRIPT  BÁSICO DE PRUEBAS\"  \n\n")
 
+;################################### SCRIPT DE PRUEBAS BASICO ################################
+; El script original tiene varios errores de definición, que generan errores no relacionados al código
+; implementado en el laboratorio.
+; Estas lineas fueron comentadas y señaladas con:
+; #### LINEA MAL DEFINIDA ###
+; Ya que se decidió no cambiar el script de pruebas,
+; se arreglaron los errores de paréntesis y se comentaron las lineas que dan error
+
 ;img1
 ;Creación de una imagen de 2 x 2 del tipo pixmap
 (define img1 (image 2 2
                   (pixrgb-d 0 0 255 0 0 10)
                   (pixrgb-d 0 1 0 255 0 20)
                   (pixrgb-d 1 0 0 0 255 10)
-                  (pixrgb-d 1 1 255 255 255  1)
- ))
-
+                  (pixrgb-d 1 1 255 255 255  1)))
 ;img2
 ;Creación de una imagen de 2 x 2 del tipo bitmap
 (define img2 (image 2 2
                   (pixbit-d 0 0 0 10)
                   (pixbit-d 0 1 1 20)
                   (pixbit-d 1 0 1 10)
-                  (pixbit-d 1 1 0 255)
- ))
+                  (pixbit-d 1 1 0 255)))
 
 (define img3 (imgRGB->imgHex img1))
 
@@ -220,8 +225,16 @@
 ;imprimir una representación string de la imagen
 (display (image->string img1 pixrgb->string))
 
+;output:
+; #FF0000 #00FF00
+; #0000FF #FFFFFF
+
 ;imprimir una representación string de la imagen
 (display (image->string img2 pixbit->string))
+
+;output:
+;0 1
+;1 0
 
 (bitmap? img1) ; la respuesta debería ser #f
 (bitmap? img2)  ; la respuesta debería ser #t
@@ -289,9 +302,9 @@
 
 ;se asume que las funciones de ajuste de canal están implementadas. 
 ;Puede cambiarlas por otras en su script de pruebas si así lo prefiere 
-;(define img15 (edit (adjustChannel getR setR incCh) img1))
-;(define img16 (edit (adjustChannel getG setG incCh) img1))
-(define img17 (edit (adjustChannel getB setB incCh) img1))
+(define img33 (edit (adjustChannel getR setR incCh) img1))
+(define img34 (edit (adjustChannel getG setG incCh) img1))
+(define img35 (edit (adjustChannel getB setB incCh) img1))
 
 ;imágenes no comprimidas
 (display (image->string img1 pixrgb->string))
@@ -299,8 +312,10 @@
 (display (image->string img3 pixhex->string))
 (display (image->string img4 pixrgb->string))
 (display (image->string img5 pixbit->string))
-;(display (image->string img6 pixhex->string))
-;(display (image->string img7 pixrgb->string))
+(display (image->string img6 pixrgb->string))
+
+; #### LINEA MAL DEFINIDA ###
+;(display (image->string img7 pixrbit->string))
 
 ;imagenes comprimidas, podrían internamente descomprimirlas para convertir a string ;(opcional)
 (display (image->string img8 pixrgb->string))
@@ -312,9 +327,13 @@
 (display (image->string img14 pixbit->string))
 
 ;imágenes no comprimidas
+
+; #### LINEA MAL DEFINIDA ###
 ;(display (image->string img15 pixrgb->string))
 (display (image->string img16 pixrgb->string))
-(display (image->string img17 pixrgb->string))
+
+; #### LINEA MAL DEFINIDA ###
+;(display (image->string img17 pixrgb->string))
 (display (image->string img18 pixrgb->string))
 (display (image->string img19 pixbit->string))
 (display (image->string img20 pixhex->string))
@@ -334,16 +353,16 @@
 (define img25 (decompress img8))
 (define img26 (decompress img9))
 (define img27 (decompress img10))
-(define img29 (decompress img11))
-(define img30 (decompress img12))
-(define img31 (decompress img13))
-(define img32 (decompress img14))
+(define img28 (decompress img11))
+(define img29 (decompress img12))
+(define img30 (decompress img13))
+(define img31 (decompress img14))
 
 ;las siguientes comparaciones deberían arrojar #t
 (equal? img25 img1)
 (equal? img26 img2)
 (equal? img27 img3)
-;(equal? img28 img4)
+(equal? img28 img4)
 (equal? img29 img5)
 (equal? img30 img6)
 (equal? img31 img7)
