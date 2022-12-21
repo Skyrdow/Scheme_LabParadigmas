@@ -1,8 +1,8 @@
 #lang racket
 
 (provide (all-defined-out))
-(require "otras_funciones.rkt")
-(require "pixel.rkt")
+(require "otras_funciones_21266659_MesiasSoza.rkt")
+(require "pixel_21266659_MesiasSoza.rkt")
 
 ;;; TDA image:
 

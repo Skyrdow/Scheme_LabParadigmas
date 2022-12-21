@@ -1,6 +1,6 @@
 #lang racket
-(require "pixel.rkt")
-(require "image.rkt")
+(require "pixel_21266659_MesiasSoza.rkt")
+(require "image_21266659_MesiasSoza.rkt")
 
 (define imgextra1 (image 2 2
                     (pixrgb-d 0 0 60 1 1 10)
