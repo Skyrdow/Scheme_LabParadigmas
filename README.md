@@ -1,4 +1,4 @@
-# LabParadigmas Funcional
+# Scheme_LabParadigmas Funcional
 Laboratorio de Paradigmas de Programación 2do semestre 2022
 * Autor: Lucas Mesias Soza
 * Sección: 13310-0-A-1
@@ -8,7 +8,7 @@ Laboratorio de Paradigmas de Programación 2do semestre 2022
 * Se requiere DrRacket versión 6.11 (https://download.racket-lang.org)
 * Descargar el proyecto o clonar el repositorio con el comando 
 ```
-git clone https://github.com/Skyrdow/LabParadigmas.git
+git clone https://github.com/Skyrdow/Scheme_LabParadigmas.git
 ```
 ## Ejecutando el laboratorio
 Se debe abrir el archivo "script.rkt" con DrRacket y hacer click en el boton "run" o presionar CTRL+R, para una ejecución correcta, los archivos "image.rkt", "otras_funciones.rkt" y "pixel.rkt" deben estar en la misma carpeta que el archivo que estamos ejecutando.
